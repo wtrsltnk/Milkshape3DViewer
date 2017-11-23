@@ -14,8 +14,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <gl/glaux.h> 
-
 class Model
 {
 	public:
@@ -73,8 +71,7 @@ class Model
 			Called if OpenGL context was lost and we need to reload textures, display lists, etc.
 		*/
 		void reloadTextures();
-		GLuint LoadGLTexture( const char *filename );						// Load Bitmaps And Convert To Textures
-		AUX_RGBImageRec *LoadBMP(const char *Filename);						// Loads A Bitmap Image
+        GLuint LoadGLTexture( const char *filename );						// Load Bitmaps And Convert To Textures
 
 	protected:
 		//	Meshes used

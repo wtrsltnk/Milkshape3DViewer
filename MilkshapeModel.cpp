@@ -16,7 +16,10 @@
 
 #include "MilkshapeModel.h"
 
-#include <fstream.h>
+#include <fstream>
+#include <iostream>
+
+using namespace std;
 
 MilkshapeModel::MilkshapeModel()
 {
@@ -114,27 +117,38 @@ struct MS3DKeyframe
 
 bool MilkshapeModel::loadModelData( const char *filename )
 {
-	ifstream inputFile( filename, ios::in | ios::binary | ios::nocreate );
+    ifstream inputFile( filename, std::ios::in | std::ios::binary );
 	if ( inputFile.fail())
+    {
+        std::cerr << "Couldn't open the model file: " << filename << ".\n";
 		return false;	// "Couldn't open the model file."
+    }
 
-	inputFile.seekg( 0, ios::end );
+    std::cout << "Loaded the model file: " << filename << ".\n";
+
+    inputFile.seekg( 0, ios::end );
 	long fileSize = inputFile.tellg();
 	inputFile.seekg( 0, ios::beg );
 
-	byte *pBuffer = new byte[fileSize];
+    char *pBuffer = new char[fileSize];
 	inputFile.read( pBuffer, fileSize );
 	inputFile.close();
 
-	const byte *pPtr = pBuffer;
+    const char *pPtr = pBuffer;
 	MS3DHeader *pHeader = ( MS3DHeader* )pPtr;
 	pPtr += sizeof( MS3DHeader );
 
 	if ( strncmp( pHeader->m_ID, "MS3D000000", 10 ) != 0 )
+    {
+        std::cerr << "Not a valid Milkshape3D model file.\n";
 		return false; // "Not a valid Milkshape3D model file."
+    }
 
 	if ( pHeader->m_version < 3 || pHeader->m_version > 4 )
-		return false; // "Unhandled file version. Only Milkshape3D Version 1.3 and 1.4 is supported." );
+    {
+        std::cerr << "Unhandled file version (" << pHeader->m_version << "). Only Milkshape3D Version 1.3 and 1.4 is supported.\n";
+        return false; // "Unhandled file version. Only Milkshape3D Version 1.3 and 1.4 is supported." );
+    }
 
 	int nVertices = *( word* )pPtr; 
 	m_numVertices = nVertices;
